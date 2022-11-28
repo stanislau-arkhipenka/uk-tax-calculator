@@ -1,34 +1,30 @@
 from constants import *
 
 
-def calculate_tax(an_inc: int, print_stats: bool =True):
+def calculate_tax(an_inc: int, print_stats: bool = True):
     # Adjust personal allowance
+    pa = personal_allownace
     if an_inc >= personal_allowance_high_tr:
-        bands.pop(0)
-        bands.insert(0, (0, 0, 0, "_"))
+        pa = 0
     elif an_inc > personal_allowance_low_tr and an_inc < personal_allowance_high_tr:
-        tmp_val = personal_allownace - (an_inc - personal_allowance_low_tr) / 2
-        bands.pop(0)
-        bands.insert(0, (0, round(tmp_val, ROUND_VAL), 0, "_"))
+        tmp_val = pa - (an_inc - personal_allowance_low_tr) / 2
+        pa = round(tmp_val, ROUND_VAL)
 
-    if print_stats:
-        print("Anual income:", an_inc)
-        print("Personal Allowance:", bands[0][1])
-        print("-----------")
-
-    x = an_inc
     total_tax = 0
-    done = False
-    for band in bands:
-        if x > band[1]:
-            a = band[1] - band[0]
-            t = round(a*(band[2]/100), ROUND_VAL)
-            x = x - a
+    tmp_an_inc = max(an_inc - pa, 0)
+    for band in bands_2:
+        if band[0] > 0:
+            taxible = min(band[0], tmp_an_inc)
         else:
-            t = round(x*(band[2]/100), ROUND_VAL)
-            done = True
-        total_tax += t
-        if band[3] != "_" and print_stats:
-            print(band[3], "tax:", t)
-        if done:
-            return round(total_tax, ROUND_VAL)
+            taxible = tmp_an_inc
+        tax = round(taxible*band[1]/100, ROUND_VAL)
+
+        if print_stats:
+            print(band[2], "tax", tax)
+
+        total_tax += tax
+        tmp_an_inc -=taxible 
+        if tmp_an_inc <= 0:
+            break
+        
+    return total_tax

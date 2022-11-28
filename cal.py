@@ -9,12 +9,12 @@ if __name__ == "__main__":
     total_tax = calculate_tax(an_inc)
 
     print("-----------")
-    print("Total anual tax:", round(total_tax,3))
-    print("Total monthly tax:", round(total_tax/12,3))
+    print("Total anual tax:", round(total_tax,ROUND_VAL))
+    print("Total monthly tax:", round(total_tax/12,ROUND_VAL))
 
     print("-----------")
     while True:
         month_in = float(input("Month raw value:"))
-        ratio = round(month_in / an_inc, 3)
+        ratio = round(month_in / an_inc, ROUND_VAL)
         mt = total_tax * ratio
         print("Expected tax:", mt)
